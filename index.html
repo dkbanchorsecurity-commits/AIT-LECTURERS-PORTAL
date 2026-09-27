@@ -5,20 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIT Lecturer Portal</title>
     
-    <!-- Favicon & PWA -->
     <link rel="icon" type="image/png" href="AIT.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <link rel="apple-touch-icon" href="icon-192.png">
 
-    <!-- Tailwind & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Uses the shared CSS file from the Admin Portal -->
+    <link rel="stylesheet" href="admin.css">
+
+    <!-- Critical CSS to prevent views from stacking on page load -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
         .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view-section.active { display: block; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -32,7 +36,7 @@
 </head>
 <body class="h-screen flex overflow-hidden text-slate-800 bg-slate-50">
 
-    <!-- Login View -->
+    <!-- Login Overlay -->
     <div id="login-view" class="fixed inset-0 bg-blue-900 z-50 flex items-center justify-center p-4 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
             <img src="AIT.png" alt="AIT Logo" class="w-20 h-20 mx-auto mb-4 bg-white rounded-full border-4 border-blue-50 shadow-sm object-contain">
@@ -54,7 +58,7 @@
         </div>
     </div>
 
-    <!-- Mobile overlay -->
+    <!-- Mobile Navigation Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-20 hidden lg:hidden transition-opacity" onclick="toggleSidebar()"></div>
 
     <!-- Sidebar -->
@@ -68,21 +72,12 @@
         </div>
         
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <a href="#" class="nav-link active flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 transition-colors bg-blue-800 text-yellow-400 font-medium" data-target="dashboard">
-                <i class="fa-solid fa-house w-5 text-center"></i> Home
-            </a>
-            <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="log-attendance">
-                <i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Class Roster
-            </a>
-            <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="my-courses">
-                <i class="fa-solid fa-book w-5 text-center"></i> My Courses
-            </a>
+            <a href="#" class="nav-link active flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 transition-colors bg-blue-800 text-yellow-400 font-medium" data-target="dashboard"><i class="fa-solid fa-house w-5 text-center"></i> Home</a>
+            <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="log-attendance"><i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Class Roster</a>
+            <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="my-courses"><i class="fa-solid fa-book w-5 text-center"></i> My Courses</a>
             
-            <!-- PWA Install Button (Desktop) -->
             <div class="mt-8">
-                <button class="pwa-install-btn hidden w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-download"></i> Install App
-                </button>
+                <button class="pwa-install-btn hidden w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Install App</button>
             </div>
         </nav>
 
@@ -100,19 +95,13 @@
         </div>
     </aside>
 
+    <!-- Main Views -->
     <main class="flex-1 flex flex-col h-full overflow-hidden relative">
-        <!-- Mobile Header -->
         <header class="bg-white shadow-sm lg:hidden flex items-center justify-between p-4 z-10 relative border-b border-slate-200 flex-shrink-0">
-            <button class="text-slate-600 hover:text-blue-600 focus:outline-none p-2 -ml-2" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars text-2xl"></i>
-            </button>
+            <button class="text-slate-600 hover:text-blue-600 focus:outline-none p-2 -ml-2" onclick="toggleSidebar()"><i class="fa-solid fa-bars text-2xl"></i></button>
             <h1 class="text-xl font-bold text-slate-900">Lecturer Portal</h1>
-            
-            <!-- Mobile Install Button -->
             <div class="min-w-[80px] flex justify-end">
-                <button class="pwa-install-btn hidden bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-sm font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1">
-                    <i class="fa-solid fa-download"></i> Install
-                </button>
+                <button class="pwa-install-btn hidden bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-sm font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1"><i class="fa-solid fa-download"></i> Install</button>
             </div>
         </header>
 
@@ -125,23 +114,16 @@
                     <p class="text-sm sm:text-base text-slate-500 mt-1">Manage your daily classes and attendance.</p>
                 </div>
 
-                <!-- Clock In Card -->
                 <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl shadow-md p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
                     <i class="fa-solid fa-clock absolute -right-10 -bottom-10 text-9xl text-white opacity-10"></i>
-                    
                     <div class="relative z-10 w-full md:w-auto flex-1">
                         <h3 class="text-xl font-bold text-yellow-400 mb-2">Daily Clock In</h3>
                         <p class="text-blue-100 text-sm max-w-md mb-4 md:mb-0">Select the course you are teaching right now to log your GPS arrival timestamp.</p>
                         <p id="clock-in-status" class="mt-3 text-sm font-semibold hidden"></p>
                     </div>
-
                     <div class="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                        <select id="clock-in-course" onchange="resetClockInState()" class="w-full sm:w-64 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm cursor-pointer">
-                            <option value="" disabled selected>Select Course...</option>
-                        </select>
-                        <button id="clock-in-btn" onclick="clockInLecturer()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap">
-                            <i class="fa-solid fa-location-dot"></i> Clock In Now
-                        </button>
+                        <select id="clock-in-course" onchange="resetClockInState()" class="w-full sm:w-64 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm cursor-pointer"><option value="" disabled selected>Select Course...</option></select>
+                        <button id="clock-in-btn" onclick="clockInLecturer()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap"><i class="fa-solid fa-location-dot"></i> Clock In Now</button>
                     </div>
                 </div>
 
@@ -161,18 +143,16 @@
                 </div>
             </section>
 
-            <!-- Class Roster View -->
+            <!-- Roster View -->
             <section id="log-attendance" class="view-section max-w-6xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 flex flex-wrap items-center gap-3">
-                            Class Roster 
-                            <input type="date" id="roster-date-filter" class="text-sm sm:text-base font-semibold text-blue-700 bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all">
+                            Class Roster <input type="date" id="roster-date-filter" class="text-sm sm:text-base font-semibold text-blue-700 bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all">
                         </h2>
                         <p class="text-sm sm:text-base text-slate-500 mt-1">View students who have checked into your courses on the selected date.</p>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto overflow-y-auto max-h-[600px]">
                         <table class="w-full text-left border-collapse whitespace-nowrap min-w-max table-zebra">
@@ -198,7 +178,6 @@
                     <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">My Assigned Courses</h2>
                     <p class="text-sm sm:text-base text-slate-500 mt-1">Courses currently assigned to your profile.</p>
                 </div>
-
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap min-w-max table-zebra">
@@ -216,354 +195,16 @@
         </div>
     </main>
 
-    <!-- Message Box -->
+    <!-- Toast Messages -->
     <div id="message-box" class="fixed bottom-4 right-4 left-4 sm:left-auto bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-24 opacity-0 transition-all duration-300 z-50 flex items-center justify-between sm:justify-start gap-3">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-circle-check text-green-400 flex-shrink-0"></i>
-            <span id="message-text">Message</span>
-        </div>
+        <div class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-green-400 flex-shrink-0"></i><span id="message-text">Message</span></div>
     </div>
 
-    <!-- UI Helpers (Isolated from Firebase) -->
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            if (overlay.classList.contains('hidden')) {
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                overlay.classList.remove('opacity-100');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
-        }
+    <!-- External UI Scripts -->
+    <script src="lecturer-ui.js"></script>
+    
+    <!-- External Firebase/Logic Scripts -->
+    <script type="module" src="lecturer-app.js"></script>
 
-        function showMessage(msg, type = "success") {
-            const box = document.getElementById('message-box');
-            const icon = box.querySelector('i');
-            document.getElementById('message-text').innerText = msg;
-            
-            if (type === "error") {
-                icon.className = "fa-solid fa-circle-exclamation text-red-400 flex-shrink-0";
-                box.classList.replace('bg-slate-800', 'bg-red-900');
-            } else {
-                icon.className = "fa-solid fa-circle-check text-green-400 flex-shrink-0";
-                box.classList.replace('bg-red-900', 'bg-slate-800');
-            }
-
-            box.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => box.classList.add('translate-y-24', 'opacity-0'), 3000);
-        }
-
-        function toTitleCase(str) {
-            if (!str) return '';
-            return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-        }
-
-        function getStatusBadge(status) {
-            const baseClass = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold";
-            if (status === 'present') return `<span class="${baseClass} bg-emerald-100 text-emerald-700">Present</span>`;
-            if (status === 'late') return `<span class="${baseClass} bg-amber-100 text-amber-700">Late</span>`;
-            return `<span class="${baseClass} bg-red-100 text-red-700">Absent</span>`;
-        }
-
-        function initializeDatePicker() {
-            const dateInput = document.getElementById('roster-date-filter');
-            if (dateInput) {
-                dateInput.value = new Date().toISOString().split('T')[0];
-            }
-        }
-        initializeDatePicker();
-
-        function resetClockInState() {
-            const btn = document.getElementById('clock-in-btn');
-            const statusText = document.getElementById('clock-in-status');
-            
-            btn.classList.remove('bg-emerald-500', 'text-white');
-            btn.classList.add('bg-yellow-400', 'text-blue-900');
-            btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Clock In Now';
-            btn.disabled = false;
-            
-            statusText.classList.add('hidden');
-            statusText.innerText = '';
-        }
-    </script>
-
-    <!-- Application Logic & Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDVqMmPMCDX5JFb85kTlfm6fCk8cNKciH4",
-            authDomain: "ait-attendance-20bb6.firebaseapp.com",
-            projectId: "ait-attendance-20bb6",
-            storageBucket: "ait-attendance-20bb6.firebasestorage.app",
-            messagingSenderId: "262056210376",
-            appId: "1:262056210376:web:c8a7260a8491f932a69afd"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let currentLecturer = null;
-        let myCourses = [];
-        let unsubscribeAttendance = null; 
-
-        initPWA();
-        setupNavigation();
-
-        // --- PWA Initialization ---
-        function initPWA() {
-            let deferredPrompt;
-            const installButtons = document.querySelectorAll('.pwa-install-btn');
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                installButtons.forEach(btn => btn.classList.remove('hidden'));
-            });
-
-            installButtons.forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    installButtons.forEach(b => b.classList.add('hidden'));
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        deferredPrompt = null;
-                    }
-                });
-            });
-
-            window.addEventListener('appinstalled', () => {
-                installButtons.forEach(btn => btn.classList.add('hidden'));
-                deferredPrompt = null;
-            });
-
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
-            }
-        }
-
-        // --- Navigation ---
-        function setupNavigation() {
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('data-target');
-                    
-                    document.querySelectorAll('.nav-link').forEach(l => {
-                        l.classList.remove('bg-blue-800', 'text-yellow-400', 'active');
-                        l.classList.add('text-white');
-                    });
-                    
-                    link.classList.remove('text-white');
-                    link.classList.add('bg-blue-800', 'text-yellow-400', 'active');
-
-                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-                    document.getElementById(targetId).classList.add('active');
-                    
-                    if(window.innerWidth < 1024) toggleSidebar();
-                });
-            });
-        }
-
-        // --- Login Logic ---
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.toLowerCase().trim();
-            const btn = e.target.querySelector('button');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-
-            try {
-                const q = query(collection(db, "lecturers"), where("email", "==", email));
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    showMessage("Email not found. Please contact an Administrator.", "error");
-                    btn.innerHTML = 'Access Portal <i class="fa-solid fa-arrow-right"></i>';
-                    return;
-                }
-
-                querySnapshot.forEach((doc) => { currentLecturer = { id: doc.id, ...doc.data() }; });
-
-                document.getElementById('user-name').innerText = toTitleCase(currentLecturer.name);
-                document.getElementById('user-dept').innerText = toTitleCase(currentLecturer.dept);
-                document.getElementById('welcome-name').innerText = toTitleCase(currentLecturer.name);
-                document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentLecturer.name)}&background=facc15&color=1e3a8a`;
-
-                await loadMyCourses();
-                startStudentAttendanceListener(); 
-                
-                const loginView = document.getElementById('login-view');
-                loginView.classList.add('opacity-0');
-                setTimeout(() => loginView.style.display = 'none', 300);
-
-            } catch (error) {
-                showMessage("Database error: " + error.message, "error");
-                btn.innerHTML = 'Access Portal <i class="fa-solid fa-arrow-right"></i>';
-            }
-        });
-
-        const logout = () => {
-            currentLecturer = null;
-            myCourses = [];
-            if (unsubscribeAttendance) {
-                unsubscribeAttendance(); 
-                unsubscribeAttendance = null;
-            }
-
-            const loginView = document.getElementById('login-view');
-            loginView.style.display = 'flex';
-            setTimeout(() => loginView.classList.remove('opacity-0'), 10);
-            
-            document.getElementById('login-email').value = '';
-            document.querySelector('#login-form button').innerHTML = 'Access Portal <i class="fa-solid fa-arrow-right"></i>';
-            
-            resetClockInState();
-            document.getElementById('clock-in-course').value = "";
-        };
-
-        // --- Fetch Courses ---
-        async function loadMyCourses() {
-            const q = query(collection(db, "courses"), where("lecturerId", "==", currentLecturer.id));
-            const querySnapshot = await getDocs(q);
-            myCourses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-            document.getElementById('stat-my-courses').innerText = myCourses.length;
-
-            const tbody = document.getElementById('my-courses-tbody');
-            const clockInSelect = document.getElementById('clock-in-course'); 
-            
-            tbody.innerHTML = '';
-            clockInSelect.innerHTML = '<option value="" disabled selected>Select Course...</option>';
-
-            if (myCourses.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="2" class="px-6 py-4 text-center text-slate-500">No courses assigned yet.</td></tr>`;
-                clockInSelect.innerHTML = '<option value="" disabled selected>No courses assigned</option>';
-            } else {
-                myCourses.forEach(c => {
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td class="px-6 py-4 font-medium text-slate-800">${c.code.toUpperCase()}</td>
-                            <td class="px-6 py-4 text-slate-600">${toTitleCase(c.name)}</td>
-                        </tr>
-                    `);
-                    clockInSelect.innerHTML += `<option value="${c.code}|${c.name}">${c.code.toUpperCase()} - ${toTitleCase(c.name)}</option>`;
-                });
-                clockInSelect.innerHTML += `<option value="N/A|General Duty">General Duty / Office Hours</option>`;
-            }
-        }
-
-        // --- Dynamic Student Attendance Tracking (By Date) ---
-        function startStudentAttendanceListener() {
-            if (unsubscribeAttendance) unsubscribeAttendance();
-
-            const dateInput = document.getElementById('roster-date-filter');
-            const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
-
-            const qAtt = query(collection(db, "student_attendance"), where("date", "==", selectedDate));
-            
-            unsubscribeAttendance = onSnapshot(qAtt, (snapshot) => {
-                const allForDate = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const myCourseCodes = myCourses.map(c => c.code.toLowerCase());
-                const myStudents = allForDate.filter(s => myCourseCodes.includes(s.courseCode.toLowerCase()));
-                
-                const todayStr = new Date().toISOString().split('T')[0];
-                if (selectedDate === todayStr) {
-                    document.getElementById('stat-students-today').innerText = myStudents.length;
-                }
-
-                renderLecturerStudentsTable(myStudents);
-            });
-        }
-
-        document.getElementById('roster-date-filter').addEventListener('change', startStudentAttendanceListener);
-
-        function renderLecturerStudentsTable(studentsData) {
-            const tbody = document.getElementById('lecturer-students-tbody');
-            tbody.innerHTML = '';
-
-            studentsData.sort((a, b) => b.time.localeCompare(a.time));
-
-            if (studentsData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 bg-white">
-                    <i class="fa-solid fa-clipboard-list text-3xl mb-3 text-slate-300 block"></i>
-                    No students have been logged in your courses on this date.
-                </td></tr>`;
-                return;
-            }
-
-            studentsData.forEach(student => {
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr>
-                        <td class="px-6 py-3 font-medium text-slate-800">${student.studentId}</td>
-                        <td class="px-6 py-3 text-slate-600">${toTitleCase(student.name)}</td>
-                        <td class="px-6 py-3 text-slate-600 font-medium">${student.courseCode.toUpperCase()}</td>
-                        <td class="px-6 py-3 text-slate-600">${student.stream || '-'}</td>
-                        <td class="px-6 py-3 text-slate-500 font-mono text-xs">${student.time}</td>
-                        <td class="px-6 py-3 text-center">${getStatusBadge(student.status)}</td>
-                    </tr>
-                `);
-            });
-        }
-
-        // --- Lecturer Clock In ---
-        const clockInLecturer = () => {
-            if (!currentLecturer) return;
-            
-            const selectedValue = document.getElementById('clock-in-course').value;
-            if (!selectedValue) return showMessage("Please select a course before clocking in.", "error");
-
-            const btn = document.getElementById('clock-in-btn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locating...';
-            btn.disabled = true;
-
-            if (!navigator.geolocation) return finalizeClockIn("GPS not supported by browser", selectedValue);
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => finalizeClockIn(`${position.coords.latitude}, ${position.coords.longitude}`, selectedValue),
-                () => finalizeClockIn("Location Access Denied", selectedValue)
-            );
-        };
-
-        async function finalizeClockIn(gpsData, selectedCourseValue) {
-            const btn = document.getElementById('clock-in-btn');
-            const statusText = document.getElementById('clock-in-status');
-            const now = new Date();
-            const [courseCode, courseName] = selectedCourseValue.split('|');
-
-            try {
-                await addDoc(collection(db, "lecturer_attendance"), {
-                    lecturerId: currentLecturer.id,
-                    name: toTitleCase(currentLecturer.name),
-                    date: now.toISOString().split('T')[0],
-                    time: now.toTimeString().split(' ')[0].substring(0, 5),
-                    gps: gpsData,
-                    status: 'present',
-                    courseCode: courseCode,
-                    courseName: toTitleCase(courseName)
-                });
-
-                btn.classList.replace('bg-yellow-400', 'bg-emerald-500');
-                btn.classList.replace('text-blue-900', 'text-white');
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Clocked In';
-                
-                statusText.classList.remove('hidden');
-                statusText.classList.add('text-emerald-300');
-                statusText.innerText = `Recorded for ${toTitleCase(courseName)} at ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-                showMessage("Your attendance has been recorded.");
-
-            } catch (err) {
-                showMessage("Failed to clock in: " + err.message, "error");
-                btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Clock In Now';
-                btn.disabled = false;
-            }
-        }
-
-        // Expose functions to global scope for inline HTML handlers
-        window.logout = logout;
-        window.clockInLecturer = clockInLecturer;
-    </script>
 </body>
 </html>

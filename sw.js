@@ -1,8 +1,15 @@
-const CACHE_NAME = 'ait-lecturers-v1';
+// Change this version string (e.g., to v3, v4) every time you deploy a major update!
+const CACHE_NAME = 'ait-attendance-v2';
+
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './lecturer-portal.html',
+    './admin.css',
+    './admin-ui.js',
+    './admin-app.js',
+    './lecturer-ui.js',
+    './lecturer-app.js',
     './manifest.json',
     './AIT.png',
     './icon-192.png',
@@ -12,52 +19,40 @@ const ASSETS_TO_CACHE = [
     'https://cdn.jsdelivr.net/npm/chart.js'
 ];
 
-// Install Event - Cache App Shell
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-        .then(cache => {
-            console.log('Opened cache');
-            return cache.addAll(ASSETS_TO_CACHE);
-        })
-    );
+self.addEventListener('install', (event) => {
+    // Install new assets immediately
+    event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)));
     self.skipWaiting();
 });
 
-// Activate Event - Clean up old caches
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
+    // Delete old caches immediately and take control of all open tabs
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
+        caches.keys().then((keys) => Promise.all(
+            keys.map((key) => { if (key !== CACHE_NAME) return caches.delete(key); })
+        )).then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
-// Fetch Event - Network First, fallback to Cache
-self.addEventListener('fetch', event => {
-    // We only want to handle GET requests
-    if (event.request.method !== 'GET') return;
+// Listen for the forceful skip-waiting command from the browser
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
 
+// Network-First Strategy
+self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') return;
     event.respondWith(
         fetch(event.request)
-            .then(response => {
-                // If network fetch is successful, clone and update the cache
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, responseClone);
-                });
-                return response;
+            .then((networkResponse) => {
+                // If online and Vercel returns the file, update the cache silently
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+                }
+                return networkResponse;
             })
-            .catch(() => {
-                // If network fails (offline), return the cached version
-                return caches.match(event.request);
-            })
+            // If offline, serve from cache
+            .catch(() => caches.match(event.request))
     );
 });
