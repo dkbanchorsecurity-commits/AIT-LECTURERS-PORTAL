@@ -20,10 +20,14 @@
         .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        
         .table-zebra tbody tr:nth-child(odd) { background-color: #ffffff; }
         .table-zebra tbody tr:nth-child(even) { background-color: #f8fafc; }
+        .table-zebra tbody tr:hover { background-color: #f1f5f9; transition: background-color 0.2s ease; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden text-slate-800 bg-slate-50">
@@ -73,8 +77,8 @@
             <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="my-courses">
                 <i class="fa-solid fa-book w-5 text-center"></i> My Courses
             </a>
-
-            <!-- PWA Install Button (Desktop/Sidebar) -->
+            
+            <!-- PWA Install Button (Desktop) -->
             <div class="mt-8">
                 <button class="pwa-install-btn hidden w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
                     <i class="fa-solid fa-download"></i> Install App
@@ -134,7 +138,6 @@
                     <div class="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                         <select id="clock-in-course" onchange="resetClockInState()" class="w-full sm:w-64 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm cursor-pointer">
                             <option value="" disabled selected>Select Course...</option>
-                            <!-- Populated dynamically -->
                         </select>
                         <button id="clock-in-btn" onclick="clockInLecturer()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap">
                             <i class="fa-solid fa-location-dot"></i> Clock In Now
@@ -162,7 +165,6 @@
             <section id="log-attendance" class="view-section max-w-6xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <!-- Interactive Date Picker Badge -->
                         <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 flex flex-wrap items-center gap-3">
                             Class Roster 
                             <input type="date" id="roster-date-filter" class="text-sm sm:text-base font-semibold text-blue-700 bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all">
@@ -174,8 +176,8 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto overflow-y-auto max-h-[600px]">
                         <table class="w-full text-left border-collapse whitespace-nowrap min-w-max table-zebra">
-                            <thead class="sticky top-0 z-10 bg-slate-100 shadow-sm border-b border-slate-200">
-                                <tr class="text-slate-600 text-xs uppercase tracking-wider">
+                            <thead class="sticky top-0 z-10 bg-blue-700 shadow-md">
+                                <tr class="text-white text-xs uppercase tracking-wider">
                                     <th class="px-6 py-4 font-semibold">Student ID</th>
                                     <th class="px-6 py-4 font-semibold">Name</th>
                                     <th class="px-6 py-4 font-semibold">Course</th>
@@ -184,9 +186,7 @@
                                     <th class="px-6 py-4 font-semibold text-center">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="lecturer-students-tbody" class="divide-y divide-slate-100 text-sm">
-                                <!-- Records populated by JS -->
-                            </tbody>
+                            <tbody id="lecturer-students-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
                         </table>
                     </div>
                 </div>
@@ -202,8 +202,8 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap min-w-max table-zebra">
-                            <thead class="bg-slate-50 border-b border-slate-200">
-                                <tr class="text-slate-500 text-xs uppercase tracking-wider">
+                            <thead class="sticky top-0 z-10 bg-blue-700 shadow-md">
+                                <tr class="text-white text-xs uppercase tracking-wider">
                                     <th class="px-6 py-4 font-semibold">Course Code</th>
                                     <th class="px-6 py-4 font-semibold">Course Name</th>
                                 </tr>
@@ -224,7 +224,7 @@
         </div>
     </div>
 
-    <!-- UI Helpers -->
+    <!-- UI Helpers (Isolated from Firebase) -->
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -261,7 +261,13 @@
             return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         }
 
-        // Initialize the date picker to today's date immediately on load
+        function getStatusBadge(status) {
+            const baseClass = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold";
+            if (status === 'present') return `<span class="${baseClass} bg-emerald-100 text-emerald-700">Present</span>`;
+            if (status === 'late') return `<span class="${baseClass} bg-amber-100 text-amber-700">Late</span>`;
+            return `<span class="${baseClass} bg-red-100 text-red-700">Absent</span>`;
+        }
+
         function initializeDatePicker() {
             const dateInput = document.getElementById('roster-date-filter');
             if (dateInput) {
@@ -270,18 +276,15 @@
         }
         initializeDatePicker();
 
-        // Resets the clock-in button so lecturers can log multiple courses a day
         function resetClockInState() {
             const btn = document.getElementById('clock-in-btn');
             const statusText = document.getElementById('clock-in-status');
             
-            // Revert colors back to yellow/blue
             btn.classList.remove('bg-emerald-500', 'text-white');
             btn.classList.add('bg-yellow-400', 'text-blue-900');
             btn.innerHTML = '<i class="fa-solid fa-location-dot"></i> Clock In Now';
             btn.disabled = false;
             
-            // Hide the previous success message
             statusText.classList.add('hidden');
             statusText.innerText = '';
         }
@@ -308,24 +311,62 @@
         let myCourses = [];
         let unsubscribeAttendance = null; 
 
-        // --- Navigation ---
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('data-target');
-                document.querySelectorAll('.nav-link').forEach(l => {
-                    l.classList.remove('bg-blue-800', 'text-yellow-400', 'active');
-                    l.classList.add('text-white');
-                });
-                link.classList.remove('text-white');
-                link.classList.add('bg-blue-800', 'text-yellow-400', 'active');
+        initPWA();
+        setupNavigation();
 
-                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-                document.getElementById(targetId).classList.add('active');
-                
-                if(window.innerWidth < 1024) toggleSidebar();
+        // --- PWA Initialization ---
+        function initPWA() {
+            let deferredPrompt;
+            const installButtons = document.querySelectorAll('.pwa-install-btn');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installButtons.forEach(btn => btn.classList.remove('hidden'));
             });
-        });
+
+            installButtons.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    installButtons.forEach(b => b.classList.add('hidden'));
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt = null;
+                    }
+                });
+            });
+
+            window.addEventListener('appinstalled', () => {
+                installButtons.forEach(btn => btn.classList.add('hidden'));
+                deferredPrompt = null;
+            });
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+            }
+        }
+
+        // --- Navigation ---
+        function setupNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    
+                    document.querySelectorAll('.nav-link').forEach(l => {
+                        l.classList.remove('bg-blue-800', 'text-yellow-400', 'active');
+                        l.classList.add('text-white');
+                    });
+                    
+                    link.classList.remove('text-white');
+                    link.classList.add('bg-blue-800', 'text-yellow-400', 'active');
+
+                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    if(window.innerWidth < 1024) toggleSidebar();
+                });
+            });
+        }
 
         // --- Login Logic ---
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -344,9 +385,7 @@
                     return;
                 }
 
-                querySnapshot.forEach((doc) => {
-                    currentLecturer = { id: doc.id, ...doc.data() };
-                });
+                querySnapshot.forEach((doc) => { currentLecturer = { id: doc.id, ...doc.data() }; });
 
                 document.getElementById('user-name').innerText = toTitleCase(currentLecturer.name);
                 document.getElementById('user-dept').innerText = toTitleCase(currentLecturer.dept);
@@ -366,7 +405,7 @@
             }
         });
 
-        window.logout = () => {
+        const logout = () => {
             currentLecturer = null;
             myCourses = [];
             if (unsubscribeAttendance) {
@@ -377,49 +416,13 @@
             const loginView = document.getElementById('login-view');
             loginView.style.display = 'flex';
             setTimeout(() => loginView.classList.remove('opacity-0'), 10);
+            
             document.getElementById('login-email').value = '';
             document.querySelector('#login-form button').innerHTML = 'Access Portal <i class="fa-solid fa-arrow-right"></i>';
             
-            // Clean up UI state
             resetClockInState();
             document.getElementById('clock-in-course').value = "";
         };
-
-        // --- PWA Installation & Service Worker Logic ---
-        let deferredPrompt;
-        const installButtons = document.querySelectorAll('.pwa-install-btn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installButtons.forEach(btn => btn.classList.remove('hidden'));
-        });
-
-        installButtons.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                installButtons.forEach(b => b.classList.add('hidden'));
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to the install prompt: ${outcome}`);
-                    deferredPrompt = null;
-                }
-            });
-        });
-
-        window.addEventListener('appinstalled', () => {
-            installButtons.forEach(btn => btn.classList.add('hidden'));
-            deferredPrompt = null;
-            console.log('PWA was installed');
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered!'))
-                    .catch(err => console.error('Service Worker registration failed: ', err));
-            });
-        }
 
         // --- Fetch Courses ---
         async function loadMyCourses() {
@@ -440,25 +443,21 @@
                 clockInSelect.innerHTML = '<option value="" disabled selected>No courses assigned</option>';
             } else {
                 myCourses.forEach(c => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-slate-800">${c.code.toUpperCase()}</td>
-                        <td class="px-6 py-4 text-slate-600">${toTitleCase(c.name)}</td>
-                    `;
-                    tbody.appendChild(tr);
-
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-slate-800">${c.code.toUpperCase()}</td>
+                            <td class="px-6 py-4 text-slate-600">${toTitleCase(c.name)}</td>
+                        </tr>
+                    `);
                     clockInSelect.innerHTML += `<option value="${c.code}|${c.name}">${c.code.toUpperCase()} - ${toTitleCase(c.name)}</option>`;
                 });
-                
                 clockInSelect.innerHTML += `<option value="N/A|General Duty">General Duty / Office Hours</option>`;
             }
         }
 
         // --- Dynamic Student Attendance Tracking (By Date) ---
         function startStudentAttendanceListener() {
-            if (unsubscribeAttendance) {
-                unsubscribeAttendance();
-            }
+            if (unsubscribeAttendance) unsubscribeAttendance();
 
             const dateInput = document.getElementById('roster-date-filter');
             const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
@@ -496,56 +495,35 @@
             }
 
             studentsData.forEach(student => {
-                let statusBadge = '';
-                if (student.status === 'present') {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Present</span>`;
-                } else if (student.status === 'late') {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Late</span>`;
-                } else {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Absent</span>`;
-                }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-6 py-3 font-medium text-slate-800">${student.studentId}</td>
-                    <td class="px-6 py-3 text-slate-600">${toTitleCase(student.name)}</td>
-                    <td class="px-6 py-3 text-slate-600 font-medium">${student.courseCode.toUpperCase()}</td>
-                    <td class="px-6 py-3 text-slate-600">${student.stream || '-'}</td>
-                    <td class="px-6 py-3 text-slate-500 font-mono text-xs">${student.time}</td>
-                    <td class="px-6 py-3 text-center">${statusBadge}</td>
-                `;
-                tbody.appendChild(tr);
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td class="px-6 py-3 font-medium text-slate-800">${student.studentId}</td>
+                        <td class="px-6 py-3 text-slate-600">${toTitleCase(student.name)}</td>
+                        <td class="px-6 py-3 text-slate-600 font-medium">${student.courseCode.toUpperCase()}</td>
+                        <td class="px-6 py-3 text-slate-600">${student.stream || '-'}</td>
+                        <td class="px-6 py-3 text-slate-500 font-mono text-xs">${student.time}</td>
+                        <td class="px-6 py-3 text-center">${getStatusBadge(student.status)}</td>
+                    </tr>
+                `);
             });
         }
 
         // --- Lecturer Clock In ---
-        window.clockInLecturer = () => {
+        const clockInLecturer = () => {
             if (!currentLecturer) return;
             
             const selectedValue = document.getElementById('clock-in-course').value;
-            if (!selectedValue) {
-                showMessage("Please select a course before clocking in.", "error");
-                return;
-            }
+            if (!selectedValue) return showMessage("Please select a course before clocking in.", "error");
 
             const btn = document.getElementById('clock-in-btn');
-            
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locating...';
             btn.disabled = true;
 
-            if (!navigator.geolocation) {
-                finalizeClockIn("GPS not supported by browser", selectedValue);
-                return;
-            }
+            if (!navigator.geolocation) return finalizeClockIn("GPS not supported by browser", selectedValue);
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const gps = `${position.coords.latitude}, ${position.coords.longitude}`;
-                    finalizeClockIn(gps, selectedValue);
-                },
-                (error) => {
-                    finalizeClockIn("Location Access Denied", selectedValue);
-                }
+                (position) => finalizeClockIn(`${position.coords.latitude}, ${position.coords.longitude}`, selectedValue),
+                () => finalizeClockIn("Location Access Denied", selectedValue)
             );
         };
 
@@ -553,7 +531,6 @@
             const btn = document.getElementById('clock-in-btn');
             const statusText = document.getElementById('clock-in-status');
             const now = new Date();
-
             const [courseCode, courseName] = selectedCourseValue.split('|');
 
             try {
@@ -584,9 +561,9 @@
             }
         }
 
-        // Make functions globally available for HTML onclick
+        // Expose functions to global scope for inline HTML handlers
         window.logout = logout;
-        window.resetClockInState = resetClockInState;
+        window.clockInLecturer = clockInLecturer;
     </script>
 </body>
 </html>
