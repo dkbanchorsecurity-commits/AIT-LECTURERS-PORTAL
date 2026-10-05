@@ -4,31 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIT Lecturer Portal</title>
-    
     <link rel="icon" type="image/png" href="AIT.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <link rel="apple-touch-icon" href="icon-192.png">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Uses the shared CSS file from the Admin Portal -->
     <link rel="stylesheet" href="admin.css">
-
-    <!-- Critical CSS to prevent views from stacking on page load -->
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        
         .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view-section.active { display: block; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        
         .table-zebra tbody tr:nth-child(odd) { background-color: #ffffff; }
         .table-zebra tbody tr:nth-child(even) { background-color: #f8fafc; }
         .table-zebra tbody tr:hover { background-color: #f1f5f9; transition: background-color 0.2s ease; }
@@ -36,13 +26,11 @@
 </head>
 <body class="h-screen flex overflow-hidden text-slate-800 bg-slate-50">
 
-    <!-- Login Overlay -->
     <div id="login-view" class="fixed inset-0 bg-blue-900 z-50 flex items-center justify-center p-4 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
             <img src="AIT.png" alt="AIT Logo" class="w-20 h-20 mx-auto mb-4 bg-white rounded-full border-4 border-blue-50 shadow-sm object-contain">
             <h1 class="text-2xl font-bold text-slate-800 mb-1">Lecturer Portal</h1>
             <p class="text-slate-500 text-sm mb-8">Sign in with your registered email</p>
-            
             <form id="login-form" class="space-y-4 text-left">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
@@ -58,10 +46,8 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation Overlay -->
     <div id="mobile-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-20 hidden lg:hidden transition-opacity" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar -->
     <aside id="sidebar" class="bg-blue-900 text-white w-64 flex-shrink-0 fixed lg:static inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-30 flex flex-col shadow-xl">
         <div class="p-6 flex items-center justify-between lg:justify-center border-b border-blue-800 flex-shrink-0">
             <h1 class="text-xl font-bold tracking-wider flex items-center gap-3">
@@ -70,86 +56,59 @@
             </h1>
             <button class="lg:hidden text-blue-300 hover:text-white p-2 -mr-2" onclick="toggleSidebar()"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
-        
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             <a href="#" class="nav-link active flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 transition-colors bg-blue-800 text-yellow-400 font-medium" data-target="dashboard"><i class="fa-solid fa-house w-5 text-center"></i> Home</a>
             <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="log-attendance"><i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Class Roster</a>
             <a href="#" class="nav-link flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-blue-800 hover:text-yellow-400 text-white transition-colors font-medium" data-target="my-courses"><i class="fa-solid fa-book w-5 text-center"></i> My Courses</a>
-            
-            <div class="mt-8">
-                <button class="pwa-install-btn hidden w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Install App</button>
-            </div>
+            <div class="mt-8"><button class="pwa-install-btn hidden w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Install App</button></div>
         </nav>
-
         <div class="p-4 border-t border-blue-800 flex-shrink-0">
             <div class="flex items-center justify-between p-2 rounded-xl bg-blue-800 cursor-pointer hover:bg-blue-700 transition-colors" onclick="logout()">
                 <div class="flex items-center gap-3 overflow-hidden">
-                    <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=facc15&color=1e3a8a" class="w-10 h-10 rounded-full flex-shrink-0">
-                    <div class="overflow-hidden">
-                        <p id="user-name" class="text-sm font-semibold truncate text-white">Lecturer Name</p>
-                        <p id="user-dept" class="text-xs text-blue-200 truncate">Department</p>
-                    </div>
+                    <img id="user-avatar" src="" class="w-10 h-10 rounded-full flex-shrink-0">
+                    <div class="overflow-hidden"><p id="user-name" class="text-sm font-semibold truncate text-white">Lecturer Name</p><p id="user-dept" class="text-xs text-blue-200 truncate">Department</p></div>
                 </div>
                 <i class="fa-solid fa-right-from-bracket text-blue-300"></i>
             </div>
         </div>
     </aside>
 
-    <!-- Main Views -->
     <main class="flex-1 flex flex-col h-full overflow-hidden relative">
         <header class="bg-white shadow-sm lg:hidden flex items-center justify-between p-4 z-10 relative border-b border-slate-200 flex-shrink-0">
             <button class="text-slate-600 hover:text-blue-600 focus:outline-none p-2 -ml-2" onclick="toggleSidebar()"><i class="fa-solid fa-bars text-2xl"></i></button>
             <h1 class="text-xl font-bold text-slate-900">Lecturer Portal</h1>
-            <div class="min-w-[80px] flex justify-end">
-                <button class="pwa-install-btn hidden bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-sm font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1"><i class="fa-solid fa-download"></i> Install</button>
-            </div>
+            <div class="min-w-[80px] flex justify-end"><button class="pwa-install-btn hidden bg-yellow-400 hover:bg-yellow-500 text-blue-900 text-sm font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1"><i class="fa-solid fa-download"></i> Install</button></div>
         </header>
 
         <div class="flex-1 overflow-y-auto p-4 lg:p-8">
-            
-            <!-- Dashboard View -->
             <section id="dashboard" class="view-section active space-y-6">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">Welcome, <span id="welcome-name">Lecturer</span></h2>
-                    <p class="text-sm sm:text-base text-slate-500 mt-1">Manage your daily classes and attendance.</p>
-                </div>
+                <div><h2 class="text-2xl sm:text-3xl font-bold text-slate-800">Welcome, <span id="welcome-name">Lecturer</span></h2><p class="text-sm sm:text-base text-slate-500 mt-1">Manage your daily classes and attendance.</p></div>
 
-                <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl shadow-md p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl shadow-md p-6 sm:p-8 text-white flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 relative overflow-hidden">
                     <i class="fa-solid fa-clock absolute -right-10 -bottom-10 text-9xl text-white opacity-10"></i>
-                    <div class="relative z-10 w-full md:w-auto flex-1">
+                    <div class="relative z-10 w-full xl:w-auto flex-1">
                         <h3 class="text-xl font-bold text-yellow-400 mb-2">Daily Clock In</h3>
-                        <p class="text-blue-100 text-sm max-w-md mb-4 md:mb-0">Select the course you are teaching right now to log your GPS arrival timestamp.</p>
+                        <p class="text-blue-100 text-sm max-w-md mb-4 xl:mb-0">Select your course and hall to log your GPS arrival.</p>
                         <p id="clock-in-status" class="mt-3 text-sm font-semibold hidden"></p>
                     </div>
-                    <div class="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                        <select id="clock-in-course" onchange="resetClockInState()" class="w-full sm:w-64 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm cursor-pointer"><option value="" disabled selected>Select Course...</option></select>
-                        <button id="clock-in-btn" onclick="clockInLecturer()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap"><i class="fa-solid fa-location-dot"></i> Clock In Now</button>
+                    <!-- NEW: ADDED HALL INPUT HERE -->
+                    <div class="relative z-10 flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                        <select id="clock-in-course" onchange="resetClockInState()" class="w-full sm:w-48 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm cursor-pointer"><option value="" disabled selected>Select Course...</option></select>
+                        <input type="text" id="clock-in-hall" required class="w-full sm:w-32 px-4 py-3 bg-white text-slate-800 rounded-xl focus:ring-2 focus:ring-yellow-400 outline-none font-medium shadow-sm uppercase placeholder-slate-400" placeholder="Hall..." oninput="resetClockInState()">
+                        <button id="clock-in-btn" onclick="clockInLecturer()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap"><i class="fa-solid fa-location-dot"></i> Clock In</button>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl"><i class="fa-solid fa-book"></i></div>
-                            <div><p class="text-sm text-slate-500 font-medium">Assigned Courses</p><h3 id="stat-my-courses" class="text-2xl font-bold text-slate-800">0</h3></div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl"><i class="fa-solid fa-users"></i></div>
-                            <div><p class="text-sm text-slate-500 font-medium">Students Logged Today</p><h3 id="stat-students-today" class="text-2xl font-bold text-slate-800">0</h3></div>
-                        </div>
-                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"><div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl"><i class="fa-solid fa-book"></i></div><div><p class="text-sm text-slate-500 font-medium">Assigned Courses</p><h3 id="stat-my-courses" class="text-2xl font-bold text-slate-800">0</h3></div></div></div>
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"><div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl"><i class="fa-solid fa-users"></i></div><div><p class="text-sm text-slate-500 font-medium">Students Logged Today</p><h3 id="stat-students-today" class="text-2xl font-bold text-slate-800">0</h3></div></div></div>
                 </div>
             </section>
 
-            <!-- Roster View -->
             <section id="log-attendance" class="view-section max-w-6xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 flex flex-wrap items-center gap-3">
-                            Class Roster <input type="date" id="roster-date-filter" class="text-sm sm:text-base font-semibold text-blue-700 bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all">
-                        </h2>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 flex flex-wrap items-center gap-3">Class Roster <input type="date" id="roster-date-filter" class="text-sm sm:text-base font-semibold text-blue-700 bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all"></h2>
                         <p class="text-sm sm:text-base text-slate-500 mt-1">View students who have checked into your courses on the selected date.</p>
                     </div>
                 </div>
@@ -161,6 +120,7 @@
                                     <th class="px-6 py-4 font-semibold">Student ID</th>
                                     <th class="px-6 py-4 font-semibold">Name</th>
                                     <th class="px-6 py-4 font-semibold">Course</th>
+                                    <th class="px-6 py-4 font-semibold">Hall</th> <!-- NEW -->
                                     <th class="px-6 py-4 font-semibold">Stream</th>
                                     <th class="px-6 py-4 font-semibold">Time</th>
                                     <th class="px-6 py-4 font-semibold text-center">Status</th>
@@ -172,21 +132,12 @@
                 </div>
             </section>
 
-            <!-- My Courses View -->
             <section id="my-courses" class="view-section space-y-6">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">My Assigned Courses</h2>
-                    <p class="text-sm sm:text-base text-slate-500 mt-1">Courses currently assigned to your profile.</p>
-                </div>
+                <div><h2 class="text-2xl sm:text-3xl font-bold text-slate-800">My Assigned Courses</h2></div>
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap min-w-max table-zebra">
-                            <thead class="sticky top-0 z-10 bg-blue-700 shadow-md">
-                                <tr class="text-white text-xs uppercase tracking-wider">
-                                    <th class="px-6 py-4 font-semibold">Course Code</th>
-                                    <th class="px-6 py-4 font-semibold">Course Name</th>
-                                </tr>
-                            </thead>
+                            <thead class="sticky top-0 z-10 bg-blue-700 shadow-md"><tr class="text-white text-xs uppercase tracking-wider"><th class="px-6 py-4 font-semibold">Course Code</th><th class="px-6 py-4 font-semibold">Course Name</th></tr></thead>
                             <tbody id="my-courses-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
                         </table>
                     </div>
@@ -195,16 +146,11 @@
         </div>
     </main>
 
-    <!-- Toast Messages -->
     <div id="message-box" class="fixed bottom-4 right-4 left-4 sm:left-auto bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-24 opacity-0 transition-all duration-300 z-50 flex items-center justify-between sm:justify-start gap-3">
         <div class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-green-400 flex-shrink-0"></i><span id="message-text">Message</span></div>
     </div>
 
-    <!-- External UI Scripts -->
     <script src="lecturer-ui.js"></script>
-    
-    <!-- External Firebase/Logic Scripts -->
     <script type="module" src="lecturer-app.js"></script>
-
 </body>
 </html>
